@@ -13,36 +13,42 @@ class Bakefile {
     
     private var contents: NSMutableDictionary = [:]
     
-    var url: NSURL
+    var url: URL
     
     static let NotFoundError = CLIError.Error("The Bakefile could not be found")
     static let ParsingError = CLIError.Error("The Bakefile could not be parsed")
     static let WritingError = CLIError.Error("The Bakefile could not be written to")
     
-    class func create(url url: NSURL) throws {
+    class func create(url: URL) throws {
         let startingContents = ["items": []]
          
-        guard let json = try? NSJSONSerialization.dataWithJSONObject(startingContents, options: .PrettyPrinted) else {
+        guard let json = try? JSONSerialization.data(withJSONObject: startingContents, options: .prettyPrinted) else {
             throw Bakefile.WritingError
         }
         
-        guard json.writeToURL(url, atomically: true) else {
+        do {
+            try json.write(to: url, options: .atomic)
+        } catch _ {
             throw Bakefile.WritingError
         }
     }
     
     init() throws {
-        url = NSURL(fileURLWithPath: "./Bakefile")
+        url = URL(fileURLWithPath: "./Bakefile")
         
-        guard let data = NSData(contentsOfURL: url) else {
+        guard let data = try? Data(contentsOf: url) else {
             throw Bakefile.NotFoundError
         }
         
-        guard let parsedJSON = try? NSJSONSerialization.JSONObjectWithData(data, options: []) else {
+        guard let parsedJSON = try? JSONSerialization.jsonObject(with: data, options: []) else {
             throw Bakefile.ParsingError
         }
         
-        guard let bakefileContents = parsedJSON.mutableCopy() as? NSMutableDictionary else {
+        guard let immutableBakefile = parsedJSON as? NSDictionary else {
+            throw Bakefile.ParsingError
+        }
+        
+        guard let bakefileContents = immutableBakefile.mutableCopy() as? NSMutableDictionary else {
             throw Bakefile.ParsingError
         }
         
@@ -65,7 +71,7 @@ class Bakefile {
         return customRecipes
     }
 
-    func addRecipe(recipe: NSDictionary) throws {
+    func addRecipe(_ recipe: NSDictionary) throws {
         var customRecipes: [NSDictionary] = contents["custom_recipes"] as? [NSDictionary] ?? []
         customRecipes.append(recipe)
         contents["custom_recipes"] = customRecipes
@@ -74,11 +80,12 @@ class Bakefile {
     }
     
     func save() throws {
-        guard let finalData: NSData = try? NSJSONSerialization.dataWithJSONObject(contents, options: .PrettyPrinted) else {
+        guard let finalData = try? JSONSerialization.data(withJSONObject: contents, options: .prettyPrinted) else {
             throw Bakefile.WritingError
         }
-        
-        guard finalData.writeToURL(url, atomically: true) else {
+        do {
+            try finalData.write(to: url, options: .atomic)
+        } catch _ {
             throw Bakefile.WritingError
         }
     }

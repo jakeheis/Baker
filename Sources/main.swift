@@ -18,7 +18,7 @@ CLI.registerChainableCommand(commandName: "init")
     .withSignature("[<directory>]")
     .withExecutionBlock {(arguments) in
         let baseDirectory = arguments.optionalArgument("directory") ?? "."
-        let url = NSURL(fileURLWithPath: baseDirectory).URLByAppendingPathComponent("Bakefile")
+        let url = URL(fileURLWithPath: baseDirectory).appendingPathComponent("Bakefile")
         
         do {
            try Bakefile.create(url: url)

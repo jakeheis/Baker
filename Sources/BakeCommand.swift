@@ -45,7 +45,7 @@ class BakeCommand: OptionCommandType {
         if let item = arguments.optionalArgument("item") {
             bakeItem(item)
         } else if let pipedList = Input.pipedData {
-            let items = pipedList.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).componentsSeparatedByString(" ")
+            let items = pipedList.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).components(separatedBy: " ")
             for item in items {
                 bakeItem(item)
             }
@@ -60,7 +60,7 @@ class BakeCommand: OptionCommandType {
     
     // MARK: - Baking
     
-    private func bakeItem(item: String) {
+    private func bakeItem(_ item: String) {
         let quicklyStr = quickly ? " quickly" : ""
         let toppingStr = topping == nil ? "" : " topped with \(topping!)"
 
@@ -68,7 +68,7 @@ class BakeCommand: OptionCommandType {
         
         var cookTime = 4
         
-        let recipe = checkForRecipe(item)
+        let recipe = checkForRecipe(item: item)
         if let recipe = recipe {
             cookTime = recipe["cookTime"] as? Int ?? cookTime
             silently = recipe["silently"] as? Bool ?? silently
@@ -79,7 +79,7 @@ class BakeCommand: OptionCommandType {
         }
         
         for _ in 1...cookTime {
-            NSThread.sleepForTimeInterval(1)
+            Thread.sleep(forTimeInterval: 1)
             if !silently {
                 print("...")
             }
