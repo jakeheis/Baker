@@ -26,7 +26,7 @@ class RecipeCommand: CommandType {
     func execute(arguments: CommandArguments) throws {
         let bakefile = try Bakefile()
         
-        let recipe: [String: AnyObject]
+        let recipe: [String: Any]
         
         do {
             let name = try Input.awaitInput(message: "Name of your recipe: ")
@@ -38,7 +38,7 @@ class RecipeCommand: CommandType {
             throw CLIError.error("Data should not be piped to the recipe command")
         }
         
-        try bakefile.addRecipe(recipe)
+        try bakefile.addRecipe(recipe as NSDictionary)
     }
    
 }
