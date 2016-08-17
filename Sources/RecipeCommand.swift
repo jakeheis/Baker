@@ -35,7 +35,7 @@ class RecipeCommand: CommandType {
 
             recipe = ["name": name, "cookTime": cookTime, "silently": silently]
         } catch _ {
-            throw CLIError.Error("Data should not be piped to the recipe command")
+            throw CLIError.error("Data should not be piped to the recipe command")
         }
         
         try bakefile.addRecipe(recipe)

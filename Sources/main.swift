@@ -23,7 +23,7 @@ CLI.registerChainableCommand(commandName: "init")
         do {
            try Bakefile.create(url: url)
         } catch {
-            throw CLIError.Error("The Bakefile was not able to be created")
+            throw CLIError.error("The Bakefile was not able to be created")
         }
     }
 

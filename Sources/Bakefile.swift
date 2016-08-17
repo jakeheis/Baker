@@ -15,9 +15,9 @@ class Bakefile {
     
     var url: URL
     
-    static let NotFoundError = CLIError.Error("The Bakefile could not be found")
-    static let ParsingError = CLIError.Error("The Bakefile could not be parsed")
-    static let WritingError = CLIError.Error("The Bakefile could not be written to")
+    static let NotFoundError = CLIError.error("The Bakefile could not be found")
+    static let ParsingError = CLIError.error("The Bakefile could not be parsed")
+    static let WritingError = CLIError.error("The Bakefile could not be written to")
     
     class func create(url: URL) throws {
         let startingContents = ["items": []]
