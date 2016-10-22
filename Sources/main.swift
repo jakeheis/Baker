@@ -13,7 +13,7 @@ CLI.setup(name: "baker", version: "1.1", description: "Baker - your own personal
 
 // MARK: - ChainableCommand example
 
-CLI.registerChainableCommand(commandName: "init")
+CLI.registerChainableCommand(name: "init")
     .withShortDescription("Creates a Bakefile in the current or given directory")
     .withSignature("[<directory>]")
     .withExecutionBlock {(arguments) in
@@ -29,20 +29,20 @@ CLI.registerChainableCommand(commandName: "init")
 
 // MARK: - CommandType examples
 
-CLI.registerCommand(BakeCommand())
+CLI.register(command: BakeCommand())
 
-CLI.registerCommand(RecipeCommand())
+CLI.register(command: RecipeCommand())
 
 // MARK: - LightweightCommand example
 
-func createListCommand() -> CommandType {
-    let listCommand = LightweightCommand(commandName: "list")
-    listCommand.commandShortDescription = "Lists some possible items the baker can bake for you."
+func createListCommand() -> Command {
+    let listCommand = LightweightCommand(name: "list")
+    listCommand.shortDescription = "Lists some possible items the baker can bake for you."
     
     var showExotics = false
     
     listCommand.optionsSetupBlock = {(options) in
-        options.onFlags(["-e", "--exotics-included"]) {(flag) in
+        options.add(flags: ["-e", "--exotics-included"]) {
             showExotics = true
         }
     }
@@ -63,7 +63,7 @@ func createListCommand() -> CommandType {
     return listCommand
 }
 
-CLI.registerCommand(createListCommand())
+CLI.register(command: createListCommand())
 
 // MARK: - Go
 

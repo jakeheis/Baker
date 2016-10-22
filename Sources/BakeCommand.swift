@@ -9,34 +9,26 @@
 import Foundation
 import SwiftCLI
 
-class BakeCommand: OptionCommandType {
-        
+class BakeCommand: OptionCommand {
+    
+    let name = "bake"
+    let signature = "[<item>]"
+    let shortDescription = "Bakes the items in the Bakefile"
+    
     private var quickly = false
     private var silently = false
     private var topping: String? = nil
     
-    var commandName: String  {
-        return "bake"
-    }
-    
-    var commandSignature: String  {
-        return "[<item>]"
-    }
-    
-    var commandShortDescription: String  {
-        return "Bakes the items in the Bakefile"
-    }
-    
-    func setupOptions(options: Options) {
-        options.onFlags(["-q", "--quickly"], usage: "Bake more quickly") {(flag) in
+    func setupOptions(options: OptionRegistry) {
+        options.add(flags: ["-q", "--quickly"], usage: "Bake more quickly") {
             self.quickly = true
         }
         
-        options.onFlags(["-s", "--silently"], usage: "Bake silently") {(flag) in
+        options.add(flags: ["-s", "--silently"], usage: "Bake silently") {
             self.silently = true
         }
         
-        options.onKeys(["-t", "--with-topping"], usage: "Adds a topping to the baked good", valueSignature: "topping") {(key, value) in
+        options.add(keys: ["-t", "--with-topping"], usage: "Adds a topping to the baked good", valueSignature: "topping") { (value) in
             self.topping = value
         }
     }

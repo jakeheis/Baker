@@ -9,34 +9,22 @@
 import Foundation
 import SwiftCLI
 
-class RecipeCommand: CommandType {
+class RecipeCommand: Command {
     
-    var commandName: String {
-        return "recipe"
-    }
-    
-    var commandShortDescription: String {
-        return "Creates a recipe interactively"
-    }
-    
-    var commandSignature: String {
-        return ""
-    }
+    let name = "recipe"
+    let shortDescription = "Creates a recipe interactively"
+    let signature = ""
     
     func execute(arguments: CommandArguments) throws {
         let bakefile = try Bakefile()
         
         let recipe: [String: Any]
         
-        do {
-            let name = try Input.awaitInput(message: "Name of your recipe: ")
-            let cookTime = try Input.awaitInt(message: "Cook time: ")
-            let silently = try Input.awaitYesNoInput(message: "Bake silently?")
-
-            recipe = ["name": name, "cookTime": cookTime, "silently": silently]
-        } catch _ {
-            throw CLIError.error("Data should not be piped to the recipe command")
-        }
+        let name = Input.awaitInput(message: "Name of your recipe: ")
+        let cookTime = Input.awaitInt(message: "Cook time: ")
+        let silently = Input.awaitYesNoInput(message: "Bake silently?")
+        
+        recipe = ["name": name, "cookTime": cookTime, "silently": silently]
         
         try bakefile.addRecipe(recipe as NSDictionary)
     }
