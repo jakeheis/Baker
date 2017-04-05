@@ -13,9 +13,8 @@ class RecipeCommand: Command {
     
     let name = "recipe"
     let shortDescription = "Creates a recipe interactively"
-    let signature = ""
     
-    func execute(arguments: CommandArguments) throws {
+    func execute() throws {
         let bakefile = try Bakefile()
         
         let recipe: [String: Any]

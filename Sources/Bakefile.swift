@@ -6,7 +6,7 @@
 //  Copyright © 2015 jakeheis. All rights reserved.
 //
 
-import Cocoa
+import Foundation
 import SwiftCLI
 
 class Bakefile {

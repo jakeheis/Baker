@@ -9,32 +9,19 @@
 import Foundation
 import SwiftCLI
 
-class BakeCommand: OptionCommand {
+class BakeCommand: Command {
 
     let name = "bake"
-    let signature = "[<item>]"
     let shortDescription = "Bakes the items in the Bakefile"
 
-    private var quickly = false
-    private var silently = false
-    private var topping: String? = nil
+    let item = OptionalParameter()
+    
+    let quickly = Flag("-q", "--quickly", usage: "Bake more quickly")
+    let silently = Flag("-s", "--silently", usage: "Bake silently")
+    let topping = Key<String>("-t", "--with-topping", usage: "Adds a topping to the baked good")
 
-    func setupOptions(options: OptionRegistry) {
-        options.add(flags: ["-q", "--quickly"], usage: "Bake more quickly") {
-            self.quickly = true
-        }
-
-        options.add(flags: ["-s", "--silently"], usage: "Bake silently") {
-            self.silently = true
-        }
-
-        options.add(keys: ["-t", "--with-topping"], usage: "Adds a topping to the baked good", valueSignature: "topping") { (value) in
-            self.topping = value
-        }
-    }
-
-    func execute(arguments: CommandArguments) throws  {
-        if let item = arguments.optionalArgument("item") {
+    func execute() throws  {
+        if let item = item.value {
             bakeItem(item)
         } else {
             let items = try loadBakefileItems()
@@ -48,26 +35,29 @@ class BakeCommand: OptionCommand {
     // MARK: - Baking
 
     private func bakeItem(_ item: String) {
-        let quicklyStr = quickly ? " quickly" : ""
-        let toppingStr = topping == nil ? "" : " topped with \(topping!)"
+        let quicklyStr = quickly.value ? " quickly" : ""
+        let toppingStr = topping.value == nil ? "" : " topped with \(topping.value!)"
 
         print("Baking a \(item)\(quicklyStr)\(toppingStr)")
 
-        var cookTime = 4
-
         let recipe = checkForRecipe(item: item)
+        var cookTime: Int
+        var cookSilently: Bool
         if let recipe = recipe {
-            cookTime = recipe["cookTime"] as? Int ?? cookTime
-            silently = recipe["silently"] as? Bool ?? silently
+            cookTime = recipe["cookTime"] as? Int ?? 4
+            cookSilently = recipe["silently"] as? Bool ?? silently.value
+        } else {
+            cookTime = 4
+            cookSilently = silently.value
         }
 
-        if quickly {
+        if quickly.value {
             cookTime = cookTime/2
         }
-
-        for _ in 1...cookTime {
+        
+        for _ in 0..<cookTime {
             Thread.sleep(forTimeInterval: 1)
-            if !silently {
+            if !cookSilently {
                 print("...")
             }
         }
